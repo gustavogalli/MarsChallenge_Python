@@ -1,0 +1,207 @@
+# Mars Mission: Exploration
+# Gustavo Galli
+# 19/01/2021
+
+def line():
+    print('-' * 43)
+
+
+def left(c):
+    cardinals = ('N', 'E', 'S', 'W')
+    pos = cardinals.index(c)
+    esq = pos - 1
+    roverOn[2] = cardinals[esq]
+    print(f'\033[34mExcelente! Giro à ESQUERDA realizado com sucesso!\033[m')
+    line()
+    print(f'\033[1;32mPOSIÇÃO ATUAL: {roverOn[0]} {roverOn[1]} {roverOn[2]}\033[m')
+
+
+def right(c):
+    cardinals = ('N', 'E', 'S', 'W')
+    pos = cardinals.index(c)
+    try:
+        dir = pos + 1
+        roverOn[2] = cardinals[dir]
+    except:
+        roverOn[2] = cardinals[0]
+    print(f'\033[34mExcelente! Giro à DIREITA realizado com sucesso!\033[m')
+    line()
+    print(f'\033[1;32mPOSIÇÃO ATUAL: {roverOn[0]} {roverOn[1]} {roverOn[2]}\033[m')
+
+
+def move():
+    if roverOn[2] == 'N' and roverOn[1] == medida or roverOn[2] == 'E' and roverOn[0] == medida or roverOn[2] == 'S' and roverOn[1] == 0 or roverOn[2] == 'W' and roverOn[0] == 0:
+        print(f'\033[31mNÃO É POSSÍVEL MOVER A SONDA PARA FORA DO PERÍMETRO!\033[m')
+        line()
+        print(f'\033[1;32mPOSIÇÃO ATUAL: {roverOn[0]} {roverOn[1]} {roverOn[2]}\033[m')
+    else:
+
+
+        if roverOn[2] == 'N':
+            roverOn[1] += 1 # y
+        elif roverOn[2] == 'E':
+            roverOn[0] += 1 # x
+        elif roverOn[2] == 'S':
+            roverOn[1] -= 1 # y
+        else:
+            roverOn[0] -= 1 # x
+        novapos = (roverOn[0], roverOn[1], roverOn[2])
+
+        if novapos[0] == roverOff[0] and novapos[1] == roverOff[1]:
+            print('\033[31mERRO! Não é possível mover a Rover 2!\nA Rover 1 está estacionada nessa posição.\033[m')
+            if roverOn[2] == 'N':
+                roverOn[1] -= 1  # y
+            elif roverOn[2] == 'E':
+                roverOn[0] -= 1  # x
+            elif roverOn[2] == 'S':
+                roverOn[1] += 1  # y
+            else:
+                roverOn[0] += 1  # x
+        else:
+            print(f'\033[34mÓtimo trabalho! Rover 1 movimentada com sucesso!\033[m')
+
+
+        line()
+        print(f'\033[1;32mNOVA POSIÇÃO: {roverOn[0]} {roverOn[1]} {roverOn[2]}\033[m')
+
+
+###### PROGRAMA PRINCIPAL
+### Definindo a área a ser explorada
+line()
+print('         MARS MISSION: EXPLORATION         ')
+line()
+while True:
+    try:
+        medida = int(input('\nDefina o tamanho do planalto a ser explorado: '))
+    except:
+        medida = int(input('\n\033[31mErro!\033[m Por favor, informe um valor inteiro: '))
+    if medida < 3:
+        print(f'\033[31mMelhor definir uma área maior de exploração! Marte é enorme!\033[m')
+    else:
+        break
+x = medida
+y = medida
+area = (x, y)
+print(f'\033[34mCerto! Então vamos explorar um terreno de {area}.\n\033[m')
+
+### Definindo posições das duas Rovers
+for c in range(1, 3):
+    ### Definindo posição da Rover 1
+    if c == 1:
+        print(f'Hora de definir a posição da Rover {c}!')
+        try:
+            r1x = int(input('>>> Posição X: '))
+        except:
+            print('\033[31mOps! Informe um valor inteiro!\033[m')
+            r1x = int(input('>>> Posição X: '))
+        while r1x > x:
+            print('\033[31mOps! Nessa posição X, a sonda cairá para fora da área!\033[m')
+            r1x = int(input(f'Por favor, defina uma coordenada X menor do que {x + 1}: \n'))
+        try:
+            r1y = int(input('>>> Posição Y: '))
+        except:
+            print('\033[31mOps! Informe um valor inteiro!\033[m')
+            r1y = int(input('>>> Posição Y: '))
+        while r1y > y:
+            print('\033[31mOps! Nessa posição Y, a sonda cairá para fora da área!\033[m')
+            r1y = int(input(f'Por favor, defina uma coordenada X menor do que {y + 1}: \n'))
+        r1o = str(input(f'Para qual direção a Rover {c} está apontando? [N, E, S, W] ')).upper()[0]
+        while r1o not in 'NESW':
+            print('\033[31mOps! Essa direção não existe!\033[m')
+            r1o = str(input('Favor informar uma coordenada válida: [N, E, S, W] ')).upper()[0]
+        roverOn = [r1x, r1y, r1o] ### Rover 1
+        roverOff = [0, 0, '?']
+        print(f'\n\033[34mPerfeito! Rover {c} pousou em Marte com sucesso!\nVAMOS COMEÇAR A EXPLORAÇÃO!\033[m')
+        line()
+        print(f'\033[1;32mPOSIÇÃO ATUAL: {roverOn[0]} {roverOn[1]} {roverOn[2]}\033[m')
+
+    ### Definindo posição da Rover 2
+    else:
+        print(f'Hora de definir a posição da Rover {c}!')
+        print(f'\033[1;31mCuidado!\033[m Rover 1 estacionada na posição {roverOff[0]} {roverOff[1]} {roverOff[2]}')
+
+        ### Verifica se o pouso de Rover 2 acontece na posição de Rover 1
+        while True:
+            try:
+                r2x = int(input('>>> Posição X: '))
+            except:
+                print('\033[31mOps! Informe um valor inteiro!\033[m')
+                r2x = int(input('>>> Posição X: '))
+            while r2x > x:
+                print('\033[31mOps! Nessa posição X, a sonda cairá para fora da área!\033[m')
+                r2x = int(input(f'Por favor, defina uma coordenada X menor do que {x + 1}: \n'))
+            try:
+                r2y = int(input('>>> Posição Y: '))
+            except:
+                print('\033[31mOps! Informe um valor inteiro!\033[m')
+                r2y = int(input('>>> Posição Y: '))
+            while r2y > y:
+                print('\033[31mOps! Nessa posição Y, a sonda cairá para fora da área!\033[m')
+                r2y = int(input(f'Por favor, defina uma coordenada X menor do que {y + 1}: \n'))
+            r2o = str(input(f'Para qual direção a Rover {c} está apontando? [N, E, S, W] ')).upper()[0]
+            while r2o not in 'NESW':
+                print('\033[31mOps! Essa direção não existe!\033[m')
+                r2o = str(input('Favor informar uma coordenada válida: [N, E, S, W] ')).upper()[0]
+            ### Verifica se o pouso de Rover 2 é na posição de Rover 1
+            if r2x == roverOff[0] and r2y == roverOff[1]:
+                print(f'\n\033[31mNão é possível pousar a Rover {c} onde a Rover {c-1} está estacionada!\033[m\n\nPor favor, informe uma posição vazia.')
+            else:
+                break
+        roverOn = [r2x, r2y, r2o] ### Rover 2
+        print(f'\n\033[34mPerfeito! Rover {c} pousou em Marte com sucesso!\nVAMOS COMEÇAR A EXPLORAÇÃO!\033[m')
+        line()
+        print(f'\033[1;32mPOSIÇÃO ATUAL: {roverOn[0]} {roverOn[1]} {roverOn[2]}\033[m')
+
+    ### PAINEL DE COMANDO
+    while True:
+        line()
+        if c == 1:
+            resp = str(input('\033[1mDIGITE O COMANDO:\033[m\n'
+                             '\n\033[1m[L]\033[m - Girar 90º à \033[1;32mESQUERDA\033[m'
+                             '\n\033[1m[R]\033[m - Girar 90º à \033[1;32mDIREITA\033[m'
+                             f'\n\033[1m[M]\033[m - Mover a Rover {c} um ponto \033[1;32mÀ FRENTE\033[m'
+                             '\n\033[1m[A]\033[m - Relembrar tamanho da \033[1;32mÁREA\033[m'
+                             f'\n\033[1m[X]\033[m - Estacionar Rover {c} e \033[1;32mATIVAR ROVER {c+1}\033[m\n')).strip().upper()[0]
+        else:
+            resp = str(input('\033[1mDIGITE O COMANDO:\033[m\n'
+                             '\n\033[1m[L]\033[m - Girar 90º à \033[1;32mESQUERDA\033[m'
+                             '\n\033[1m[R]\033[m - Girar 90º à \033[1;32mDIREITA\033[m'
+                             f'\n\033[1m[M]\033[m - Mover a Rover {c} ponto \033[1;32mÀ FRENTE\033[m'
+                             '\n\033[1m[A]\033[m - Relembrar tamanho da \033[1;32mÁREA\033[m'
+                             '\n\033[1m[1]\033[m - Relembrar posição da \033[1;32mROVER 1\033[m'
+                             f'\n\033[1m[X]\033[m - Estacionar Rover {c} e \033[1;32mFINALIZAR MISSÃO\033[m\n')).strip().upper()[0]
+
+        if resp == '1' and c == 2:
+            print(f'\033[34mPosição da Rover 1: {roverOff[0]} {roverOff[1]} {roverOff[2]}\033[m')
+            line()
+            print(f'\033[1;32mPOSIÇÃO ATUAL: {roverOn[0]} {roverOn[1]} {roverOn[2]}\033[m')
+        elif resp == 'L':
+            left(roverOn[2])
+        elif resp == 'R':
+            right(roverOn[2])
+        elif resp == 'M':
+            move()
+        elif resp == 'A':
+            print(f'\033[34mRelatório: A área total de exploração é de {area}.\033[m')
+            line()
+            print(f'\033[1;32mPOSIÇÃO ATUAL: {roverOn[0]} {roverOn[1]} {roverOn[2]}\033[m')
+        elif resp == 'X':
+            print(f'\033[34mRover {c} estacionada na posição {roverOn[0]} {roverOn[1]} {roverOn[2]}\033[m')
+            line()
+            if c == 1:
+                roverOff[0] = roverOn.copy()[0]
+                roverOff[1] = roverOn.copy()[1]
+                roverOff[2] = roverOn.copy()[2]
+            print(f'\033[1;32mExcelente trabalho!\nRover {c} finalizada com sucesso!\033[m')
+            line()
+            break
+        else:
+            print('\033[31mERRO! Comando não reconhecido! Tente novamente.\033[m')
+
+### Conclusão
+print(f'              \033[1mRELATÓRIO FINAL              \033[m')
+line()
+print(f'Posição final da Rover 1: {roverOff[0]} {roverOff[1]} {roverOff[2]}')
+print(f'Posição final da Rover 2: {roverOn[0]} {roverOn[1]} {roverOn[2]}')
+line()
+print('\n\033[1;34mMISSÃO FINALIZADA!\033[m')
